@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Référence Technique Professionnelle Bash</title>
+    <!-- Chargement de Tailwind CSS pour un style rapide et responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* CHARTE GRAPHIQUE SYSTÈME (Contraste maximal A11y) */
+        :root {
+            --bg-dark: #000000;      /* Noir pur pour contraste */
+            --text-main: #b3f0b3;    /* Vert clair (Accessibilité OK) */
+            --highlight: #00ff00;    /* Vert de surbrillance (actif) */
+            --border-color: #333333; /* Gris foncé pour les séparateurs */
+            --card-bg: #0a0a0a;      /* Fond de carte légèrement décalé du body */
+            --code-bg: #1a1a1a;      /* Fond sombre pour le terminal */
+            --code-border: #00ff00;  /* Bordure du terminal */
+        }
+
+        body {
+            /* Police Monospace pour corps (ambiance terminal) */
+            font-family: 'Consolas', 'Monaco', monospace; 
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.5;
+            padding-top: 3rem; 
+        }
+
+        /* Titres en Sans-Serif pour une lisibilité accrue (UX) */
+        h1, h2, h3, .navbar a {
+            font-family: 'Inter', sans-serif;
+        }
+        p, ul, pre {
+            font-size: 0.9rem;
+        }
+
+        /* BARRE DE NAVIGATION (MENU) - (Aucun changement) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.3); 
+            border-bottom: 2px solid var(--highlight);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        .navbar-inner-content {
+            padding-top: 0.5rem; 
+            padding-bottom: 0.5rem; 
+        }
+
+        .navbar a {
+            color: var(--text-main);
+            padding: 0.5rem 1rem; 
+            display: block;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+            border-right: 1px solid var(--border-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .navbar a:last-child { border-right: none; }
+
+        .navbar a:hover, .navbar a:focus {
+            background-color: var(--highlight);
+            color: var(--bg-dark);
+            outline: 2px solid var(--highlight); 
+            outline-offset: -2px;
+        }
+
+        .navbar a:active {
+            transform: scale(0.98);
+            background-color: #00b300;
+        }
+
+        /* TITRE PRINCIPAL */
+        h1 {
+            color: white; 
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            font-size: 2.5rem; 
+        }
+
+        /* CARD/ARTICLE */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 0.25rem;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--highlight); 
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.05);
+        }
+
+        .article-title {
+            color: var(--highlight);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff; 
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* TABLEAUX STYLES AJOUTÉS */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            font-family: 'Consolas', monospace;
+        }
+        .styled-table thead tr {
+            background-color: var(--highlight);
+            color: var(--bg-dark);
+            text-align: left;
+        }
+        .styled-table th, .styled-table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: var(--card-bg);
+        }
+        .styled-table tbody tr:hover {
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+        .styled-table td:first-child {
+            font-weight: bold;
+            color: var(--highlight);
+        }
+
+
+        /* BLOC DE CODE (SIMULATION TERMINAL SNAPSHOT) - (Aucun changement) */
+        .code-screen {
+            background-color: var(--code-bg); 
+            border: 3px solid var(--code-border); 
+            border-radius: 0.5rem; 
+            margin-top: 1.5rem;
+            position: relative;
+            padding: 0; 
+            overflow: hidden; 
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); 
+        }
+        
+        .terminal-header {
+            background-color: #333333; 
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-family: 'Inter', sans-serif;
+            border-bottom: 1px solid var(--code-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .terminal-dots span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .red { background-color: #ff5f56; }
+        .yellow { background-color: #ffbd2e; }
+        .green { background-color: #27c93f; }
+
+        .code-content {
+            padding: 1.25rem; 
+        }
+
+        pre code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--text-main);
+            font-size: 0.95rem; 
+            white-space: pre-wrap; 
+        }
+        
+        .prompt {
+            color: var(--highlight); 
+            font-weight: bold;
+        }
+
+        /* Bouton Copier (A11y & UI) */
+        .copy-btn {
+            background-color: var(--highlight);
+            color: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            outline: none;
+            z-index: 10; 
+        }
+        .copy-btn:hover, .copy-btn:focus {
+            background-color: #33ff33;
+            box-shadow: 0 0 5px var(--highlight);
+        }
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+        /* Notification (A11y: fort contraste pour le feedback) */
+        #notification {
+            background-color: #00ff00; 
+            color: #000000;            
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <!-- BARRE DE NAVIGATION (MENU) - Rôle Sémantique: Navigation -->
+    <nav class="navbar shadow-xl" >
+        <div class="container mx-auto px-4">
+            <div class="navbar-inner-content flex flex-wrap justify-center text-xs md:text-sm lg:text-base items-center">
+                <a href="#article-1">1. Introduction</a>
+                <a href="#article-2">2. Variables & Args</a>
+                <a href="#article-3">3. Conditions (IF)</a>
+                <a href="#article-4">4. Itérations</a>
+                <a href="#article-5">5. Fonctions</a>
+                <a href="#article-6">6. Choix (CASE)</a>
+                <a href="#article-7">7. Gestion I/O</a>
+            </div>
+        </div>
+    </nav>
+    <!-- FIN BARRE DE NAVIGATION -->
+
+    <!-- Notification de Copie (Accessibilité: role="status") -->
+    <div id="notification" role="status" aria-live="polite" class="hidden">Code Copié !</div>
+
+    <div class="container "style="margin-top: 5rem;">
+        <header class="text-center mb-16">
+            <h1 class="font-extrabold mb-3 uppercase tracking-widest" style="font-family: 'Inter', sans-serif;">
+                RÉFÉRENCE TECHNIQUE : PROGRAMMATION SHELL (BASH)
+            </h1>
+            <p class="text-base italic text-gray-500 border-b border-gray-700 pb-4">
+                Synthèse des concepts fondamentaux pour l'automatisation et l'administration système.
+            </p>
+        </header>
+
+        <main class="space-y-12">
+
+            <!-- ARTICLE 1: Les bases du Shell et des Scripts -->
+            <article id="article-1" class="card">
+                <h2 class="article-title">1. Principes Fondamentaux et Structure</h2>
+                <p>
+                    Le Shell agit comme l'interpréteur de commandes du système d'exploitation. **Bash** (Bourne Again Shell) est le langage de script standard pour l'automatisation sur les plateformes Linux/Unix. Un script garantit l'exécution séquentielle d'une série de commandes.
+                </p>
+
+                <h3 class="section-subtitle">Structure du Script (Shebang et Permissions)</h3>
+                <p>
+                    Le <em>Shebang</em> `#!/bin/bash` est obligatoire pour spécifier l'interpréteur. Les scripts doivent être rendus exécutables via `chmod +x`.
+                </p>
+
+                <!-- Exemple 1: Hello World -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">mon_script.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex1">#!/bin/bash
+# Description: Script de test initial.
+echo "Initialisation du processus..."
+
+# Exécution dans le terminal :
+<span class="prompt">$</span> chmod +x mon_script.sh
+<span class="prompt">$</span> ./mon_script.sh
+Initialisation du processus...</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex1')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ARTICLE 2: Variables et Arguments -->
+            <article id="article-2" class="card">
+                <h2 class="article-title">2. Déclaration et Utilisation des Variables</h2>
+                <p>
+                    Les variables sont non typées et déclarées sans `$`. Pour la substitution, le préfixe `$` est utilisé (e.g., `$MA_VARIABLE`). L'utilisation de guillemets doubles est recommandée pour éviter les problèmes d'espaces.
+                </p>
+
+                <h3 class="section-subtitle">Accès aux Arguments de Position</h3>
+                <p>
+                    Les scripts accèdent aux paramètres passés en ligne de commande via des variables de position : `$1`, `$2`, etc. `$0` est le nom du script, `$#` le nombre d'arguments, et `$@` représente tous les arguments.
+                </p>
+
+                <!-- Exemple 2: Variables et Arguments -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">rapport.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex2">#!/bin/bash
+# Stockage d'une commande dans une variable (commande substitution)
+DATE_EXECUTION=$(date "+%Y-%m-%d %H:%M:%S")
+
+echo "--- Rapport d'Exécution ---"
+echo "Programme: $0 (Arguments reçus: $#)"
+
+if [ "$#" -eq 1 ]; then
+    echo "Paramètre 1 traité: $1"
+else
+    echo "Avertissement: Un argument unique est attendu."
+fi
+
+echo "Heure de démarrage: $DATE_EXECUTION"
+
+# Appel exemple :
+<span class="prompt">$</span> ./rapport.sh ConfigFile.conf
+--- Rapport d'Exécution ---
+Programme: ./rapport.sh (Arguments reçus: 1)
+Paramètre 1 traité: ConfigFile.conf
+Heure de démarrage: 2024-10-29 11:32:00</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex2')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ARTICLE 3: Conditions (if/then/else) -->
+            <article id="article-3" class="card">
+                <h2 class="article-title">3. Contrôle de Flux Conditionnel (IF)</h2>
+                <p>
+                    La structure `if/then/elif/else/fi` permet la prise de décision. Les expressions de test sont évaluées à l'intérieur de crochets simples `[ ]` ou doubles `[[ ]]`.
+                </p>
+
+                <h3 class="section-subtitle">Opérateurs de Test Numérique</h3>
+                <p>Utilisés pour comparer des entiers (dans `[ ]` ou `[[ ]]`).</p>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Opérateur</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>`-eq`</td>
+                            <td>Est égal à</td>
+                            <td>`[ $A -eq $B ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`-ne`</td>
+                            <td>N'est pas égal à</td>
+                            <td>`[ $A -ne $B ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`-gt`</td>
+                            <td>Strictement supérieur à</td>
+                            <td>`[ $A -gt $B ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`-ge`</td>
+                            <td>Supérieur ou égal à</td>
+                            <td>`[ $A -ge $B ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`-lt`</td>
+                            <td>Strictement inférieur à</td>
+                            <td>`[ $A -lt $B ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`-le`</td>
+                            <td>Inférieur ou égal à</td>
+                            <td>`[ $A -le $B ]`</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-subtitle">Opérateurs de Test de Chaîne</h3>
+                <p>Utilisés pour comparer des chaînes de caractères (dans `[ ]` ou `[[ ]]`).</p>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Opérateur</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>`=` ou `==`</td>
+                            <td>Est égal à (Note: `==` est préférable dans `[[ ]]`)</td>
+                            <td>`[ "$S1" = "$S2" ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`!=`</td>
+                            <td>N'est pas égal à</td>
+                            <td>`[ "$S1" != "$S2" ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`-z`</td>
+                            <td>La chaîne est vide (longueur nulle)</td>
+                            <td>`[ -z "$S1" ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`-n`</td>
+                            <td>La chaîne n'est pas vide (longueur non nulle)</td>
+                            <td>`[ -n "$S1" ]`</td>
+                        </tr>
+                        <tr>
+                            <td>`>`</td>
+                            <td>Supérieur dans l'ordre lexicographique</td>
+                            <td>`[[ "$S1" > "$S2" ]]`</td>
+                        </tr>
+                        <tr>
+                            <td>`<`</td>
+                            <td>Inférieur dans l'ordre lexicographique</td>
+                            <td>`[[ "$S1" < "$S2" ]]`</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="section-subtitle">Exemple de Condition IF</h3>
+
+                <!-- Exemple 3: Condition IF -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">check_config.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex3">#!/bin/bash
+# Simulation d'un fichier de config
+echo "VERSION=1.0" > /tmp/config.ini 
+FICHIER_CONFIG="/tmp/config.ini"
+VERSION_MINIMALE="1.0"
+
+if [[ -f "$FICHIER_CONFIG" && -r "$FICHIER_CONFIG" ]]; then
+    echo "Configuration trouvée et accessible en lecture."
+    # On vérifie si la version est supérieure ou égale (Utilisation des tests numériques)
+    if [ $(grep -oP 'VERSION=\K\d+\.\d+' "$FICHIER_CONFIG" | tr -d '.') -ge $(echo "$VERSION_MINIMALE" | tr -d '.') ]; then
+        echo "La version est compatible."
+    fi
+    <span class="prompt">$</span> cat "$FICHIER_CONFIG" | head -n 3
+    VERSION=1.0
+elif [ ! -d "/etc/application" ]; then
+    echo "Erreur: Le chemin de l'application est inexistant."
+    exit 2
+else
+    echo "Avertissement: Fichier de configuration manquant ou non lisible."
+fi
+
+<span class="prompt">$</span> rm /tmp/config.ini # Nettoyage</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex3')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ARTICLE 4: Boucles (For et While) -->
+            <article id="article-4" class="card">
+                <h2 class="article-title">4. Structures d'Itération (Boucles)</h2>
+                <p>
+                    Les boucles `for` et `while` sont utilisées pour l'automatisation des tâches répétitives sur des listes ou basées sur une condition.
+                </p>
+
+                <h3 class="section-subtitle">Itération sur des Listes avec FOR</h3>
+                <p>
+                    La boucle `for` est idéale pour parcourir des collections d'éléments, typiquement des fichiers ou des résultats de commandes.
+                </p>
+
+                <!-- Exemple 4: Boucle For (parcourir les fichiers) -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">cleanup.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex4">#!/bin/bash
+# Simulation de fichiers temporaires
+<span class="prompt">$</span> touch a.tmp b.tmp c.log
+
+# Liste les fichiers se terminant par .tmp dans le répertoire courant
+for TEMP_FILE in *.tmp; do
+    if [ -f "$TEMP_FILE" ]; then
+        echo "Traitement du fichier temporaire: $TEMP_FILE"
+        # Ajout d'une ligne de log
+        echo "$(date +%H:%M:%S): Processed $TEMP_FILE" >> cleanup.log
+        # rm "$TEMP_FILE" # Décommenter pour supprimer réellement
+    fi
+done
+
+# Affichage du résultat dans le log
+<span class="prompt">$</span> cat cleanup.log
+11:32:01: Processed a.tmp
+11:32:01: Processed b.tmp
+
+<span class="prompt">$</span> rm a.tmp b.tmp c.log cleanup.log # Nettoyage</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex4')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">Itération Conditionnelle avec WHILE</h3>
+                <p>
+                    La boucle `while` exécute son bloc de code tant que son expression conditionnelle reste vraie. Elle est souvent utilisée pour la lecture de données ligne par ligne.
+                </p>
+
+                <!-- Exemple 5: Boucle While (lecture de fichier) -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">host_check.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex5">#!/bin/bash
+LISTE_SERVEURS="serveur1\nserveur2\nserveur3"
+echo -e "$LISTE_SERVEURS" > /tmp/hosts_list.txt
+
+# Lit le fichier ligne par ligne, en désactivant le séparateur de champ (IFS)
+while IFS= read -r HOST; do
+    echo "Tentative de connexion à l'hôte: $HOST..."
+    # Placeholder pour une commande SSH ou ping
+    # ping -c 1 $HOST
+done < /tmp/hosts_list.txt
+
+<span class="prompt">$</span> ./host_check.sh
+Tentative de connexion à l'hôte: serveur1...
+Tentative de connexion à l'hôte: serveur2...
+Tentative de connexion à l'hôte: serveur3...
+
+<span class="prompt">$</span> rm /tmp/hosts_list.txt # Nettoyage</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex5')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ARTICLE 5: Fonctions -->
+            <article id="article-5" class="card">
+                <h2 class="article-title">5. Modularisation avec les Fonctions</h2>
+                <p>
+                    Les fonctions permettent d'encapsuler la logique pour la réutiliser et améliorer la lisibilité. Elles s'exécutent dans le même processus Shell.
+                </p>
+
+                <h3 class="section-subtitle">Définition et Gestion des Codes de Retour</h3>
+                <p>
+                    L'instruction `return` définit le code de sortie de la fonction (0 pour succès, 1-255 pour erreur). La sortie (STDOUT) de la fonction est gérée par `echo`.
+                </p>
+
+                <!-- Exemple 6: Fonction avec Argument et Vérification -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">service_status.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex6">#!/bin/bash
+
+# Définition de la fonction de vérification
+verifier_service() {
+    if [ -z "$1" ]; then
+        echo "Erreur: Le nom du service est requis."
+        return 1
+    fi
+
+    SERVICE_NAME="$1"
+
+    if command -v systemctl >/dev/null; then
+        echo "Vérification de l'état du service $SERVICE_NAME..."
+        # NOTE: systemctl n'existe pas dans cet environnement, on simule le succès (0)
+        return 0 
+        # systemctl is-active "$SERVICE_NAME" > /dev/null 2>&1
+        # if [ "$?" -eq 0 ]; then
+        #     echo "STATUT: Actif (OK)"
+        #     return 0
+        # else
+        #     echo "STATUT: Inactif (Erreur)"
+        #     return 1
+        # fi
+    else
+        echo "Avertissement: systemctl non trouvé, vérification ignorée."
+        return 1
+    fi
+}
+
+# Appel de la fonction et test du code de retour
+<span class="prompt">$</span> verifier_service "nginx"
+Vérification de l'état du service nginx...
+# (Si systemctl existait, la ligne ci-dessous serait affichée)
+# STATUT: Actif (OK) 
+
+if [ "$?" -ne 0 ]; then
+    echo "Échec de la vérification du service NGINX."
+fi</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex6')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ARTICLE 6: Structure de Choix (Case) -->
+            <article id="article-6" class="card">
+                <h2 class="article-title">6. Gestion des Options Multiples (CASE)</h2>
+                <p>
+                    La structure `case` est utilisée pour effectuer un choix parmi plusieurs valeurs possibles (motifs). Elle est souvent préférée à une série complexe de `if/elif` pour la gestion des options d'un script.
+                </p>
+
+                <h3 class="section-subtitle">Syntaxe et Motifs (* et |)</h3>
+                <p>
+                    Chaque bloc se termine par `;;`. Le motif `*` sert de valeur par défaut pour capturer toute entrée non couverte.
+                </p>
+
+                <!-- Exemple 7: Case Statement -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">tool.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex7">#!/bin/bash
+COMMANDE_UTILISATEUR=$1
+
+case "$COMMANDE_UTILISATEUR" in
+    init|setup)
+        echo "Déploiement des dépendances..."
+        ;;
+    status)
+        echo "Affichage de l'état du système..."
+        ;;
+    clean)
+        echo "Nettoyage des fichiers temporaires..."
+        # find /tmp -name "*.tmp" -delete
+        ;;
+    help|-h|--help) # Options d'aide
+        echo "Afficher l'aide de l'outil."
+        ;;
+    *) # Capture toutes les autres commandes
+        echo "Erreur: Commande non reconnue: $COMMANDE_UTILISATEUR"
+        echo "Utilisation: $0 [init|status|clean]"
+        exit 1
+        ;;
+esac
+
+# Exemples d'appel :
+<span class="prompt">$</span> ./tool.sh init
+Déploiement des dépendances...
+
+<span class="prompt">$</span> ./tool.sh non_valide
+Erreur: Commande non reconnue: non_valide
+Utilisation: ./tool.sh [init|status|clean]</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex7')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ARTICLE 7: Redirection d'Entrée/Sortie (I/O) -->
+            <article id="article-7" class="card">
+                <h2 class="article-title">7. Redirection des Flux (I/O)</h2>
+                <p>
+                    La gestion des flux (Input/Output) permet de rediriger les données de sortie d'une commande (STDOUT et STDERR) vers un fichier ou de les utiliser comme entrée (STDIN) pour une autre commande.
+                </p>
+
+                <h3 class="section-subtitle">Opérateurs Clés</h3>
+                <ul class="list-disc ml-6 space-y-1 text-sm">
+                    <li>`>` : Redirection de STDOUT, écrase le fichier cible.</li>
+                    <li>`>>` : Redirection de STDOUT, ajoute au fichier cible.</li>
+                    <li>`2>` : Redirection de STDERR (flux d'erreur).</li>
+                    <li>`&>` ou `2>&1` : Redirection de STDOUT et STDERR vers le même fichier.</li>
+                    <li>`|` : Pipe, connecte la sortie de la commande A à l'entrée de la commande B.</li>
+                </ul>
+
+                <!-- Exemple 8: Redirection I/O -->
+                <div class="code-screen">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="terminal-title font-semibold">io_capture.sh — Bash Shell</div>
+                        <div>&nbsp;</div>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="code-ex8">#!/bin/bash
+LOG_FILE="maintenance_log_$(date +%Y%m%d).log"
+
+# SIMULATION : find /root va générer une erreur de permission.
+# On simule cette erreur pour le démonstrateur.
+echo "find: '/root/': Permission denied" > "$LOG_FILE"
+echo "/etc/fstab" >> "$LOG_FILE"
+echo "find: '/var/log/': Permission denied" >> "$LOG_FILE"
+
+# 2. Compte le nombre d'erreurs/lignes enregistrées, en utilisant un pipe
+NB_LIGNES=$(wc -l < "$LOG_FILE")
+NB_ERREURS=$(grep -c "Permission denied" "$LOG_FILE")
+
+echo "--- Synthèse du journal ---"
+echo "Journal créé: $LOG_FILE"
+echo "Nombre total de lignes dans le journal: $NB_LIGNES"
+echo "Nombre d'erreurs 'Permission denied': $NB_ERREURS"
+
+# Résultat d'exécution :
+<span class="prompt">$</span> ./io_capture.sh
+--- Synthèse du journal ---
+Journal créé: maintenance_log_20241029.log
+Nombre total de lignes dans le journal: 3
+Nombre d'erreurs 'Permission denied': 2
+
+<span class="prompt">$</span> rm "$LOG_FILE" # Nettoyage</code></pre>
+                        <button class="copy-btn absolute top-3 right-3 rounded-sm text-sm" onclick="copyCode('code-ex8')">
+                            Copier
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-700">
+            <p class="text-xs text-gray-500 tracking-wider">
+                DOCUMENTATION TECHNIQUE RÉFÉRENTIELLE — BASH SHELL SCRIPTING
+            </p>
+        </footer>
+    </div>
+
+    <!-- Script JavaScript pour la fonctionnalité de copie -->
+    <script>
+        /**
+         * Fonction pour copier le contenu d'un bloc de code spécifique au presse-papiers.
+         * @param {string} elementId L'ID de l'élément <code> à copier.
+         */
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            let textToCopy = codeElement.innerText;
+
+            // Retrait des prompts ('$' suivi d'un espace) lors de la copie pour ne récupérer que le code/la sortie utile
+            textToCopy = textToCopy.split('\n').map(line => {
+                // Si la ligne commence par le prompt '$', on retire le prompt
+                const trimmedLine = line.trim();
+                if (trimmedLine.startsWith('$')) {
+                    // Si on est certain qu'il s'agit d'une ligne d'exécution simulée
+                    return trimmedLine.substring(1).trim();
+                }
+                return line;
+            }).join('\n').trim();
+
+            // Utilisation de l'API moderne navigator.clipboard pour copier
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showNotification("Code Copié !");
+                }).catch(err => {
+                    // Fallback en cas d'échec (pour l'environnement d'exécution)
+                    fallbackCopyTextToClipboard(textToCopy);
+                });
+            } else {
+                // Fallback pour les environnements plus restrictifs (comme l'iframe)
+                fallbackCopyTextToClipboard(textToCopy);
+            }
+        }
+
+        /**
+         * Fonction de fallback utilisant document.execCommand (pour compatibilité iframe).
+         * @param {string} text Le texte à copier.
+         */
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showNotification("Code Copié ! (via fallback)");
+            } catch (err) {
+                console.error('Erreur de copie:', err);
+                showNotification("Erreur de copie.", true);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        /**
+         * Affiche une notification de réussite ou d'erreur.
+         * @param {string} message Le message à afficher.
+         * @param {boolean} isError Indique si c'est un message d'erreur.
+         */
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.innerText = message;
+            // Réinitialisation des classes pour garantir la visibilité
+            notification.className = 'text-center rounded-lg shadow-lg transition-opacity duration-300';
+            notification.classList.remove('hidden');
+            
+            // Applique les couleurs basées sur l'état
+            if (isError) {
+                notification.classList.add('bg-red-700', 'text-white');
+                notification.style.backgroundColor = '#cc0000'; // Rouge erreur
+                notification.style.color = 'white';
+            } else {
+                // Couleurs de la charte graphique pour le succès
+                notification.style.backgroundColor = '#00ff00'; 
+                notification.style.color = '#000000';
+            }
+            
+            // Styles de positionnement
+            notification.style.position = 'fixed';
+            notification.style.top = '1rem';
+            notification.style.right = '1rem';
+            notification.style.padding = '0.75rem 1.5rem';
+            notification.style.zIndex = '1000';
+            notification.style.opacity = '0';
+            
+            // Fait apparaître la notification
+            setTimeout(() => {
+                notification.style.opacity = '1';
+            }, 10);
+
+            // Fait disparaître la notification après 2.5 secondes
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                // Masque l'élément après la transition
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 300);
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
