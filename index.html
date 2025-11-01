@@ -55,13 +55,20 @@
 
         .navbar a {
             color: var(--text-main);
-            padding: 0.5rem 1rem; 
+            padding: 0.5rem 0.6rem; /* Réduit un peu le padding pour plus d'éléments */
             display: block;
             font-weight: 600;
             transition: background-color 0.2s, color 0.2s, transform 0.1s;
             border-right: 1px solid var(--border-color);
             text-decoration: none;
             cursor: pointer;
+            font-size: 0.75rem; /* Réduit la taille de police sur mobile/petit écran */
+        }
+        @media (min-width: 768px) {
+             .navbar a {
+                font-size: 0.875rem; /* Taille standard sur desktop */
+                padding: 0.5rem 1rem;
+            }
         }
         .navbar a:last-child { border-right: none; }
 
@@ -90,7 +97,7 @@
             border-radius: 0.25rem;
             padding: 2.5rem;
             border: 1px solid var(--border-color);
-            border-left: 6px solid var(--highlight); 
+            border-left: 6px solid var(--highlight); /* BASH: VERT */
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.05);
         }
 
@@ -223,21 +230,132 @@
             color: #000000;            
             font-weight: bold;
         }
+
+        /* NOUVEAUX STYLES AJOUTÉS POUR LES COMMANDES (SysAdmin/DevOps) */
+        .guide-block {
+            margin-top: 3rem; 
+            padding: 2.5rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--highlight); /* COHÉRENCE: VERT au lieu de bleu */
+            border-radius: 0.25rem;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.05); /* COHÉRENCE: Ombre verte */
+        }
+
+        .guide-block table{
+            width:100%;
+            border-collapse:collapse;
+            margin:10px 0;
+            background-color: #0d1117; /* Fond plus foncé pour les tableaux de référence */
+            border:1px solid #1f2937;
+            border-radius:6px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+        .guide-block th, .guide-block td{
+            padding:10px;
+            text-align:left;
+            border-bottom:1px solid #1f2937;
+            font-family: 'Consolas', monospace;
+        }
+        .guide-block th{
+            color:var(--highlight); /* COHÉRENCE: Vert */
+            background-color:#1c241a; /* Vert/gris foncé pour l'en-tête (au lieu de bleu/gris) */
+            font-weight: 700;
+        }
+        .guide-block td {
+            color: var(--text-main);
+            background-color: #0d1117;
+        }
+        .guide-block tr:nth-child(even) td {
+            background-color: #121820; /* Stripage léger */
+        }
+        .guide-block td:first-child {
+            font-weight: 600;
+            color: var(--text-main); /* COHÉRENCE: Vert clair pour les commandes (au lieu de bleu clair) */
+        }
+        
+        /* Les titres H2 des nouvelles sections */
+        .guide-block h2{
+            color:var(--highlight); /* COHÉRENCE: Vert au lieu de bleu */
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.75rem;
+            border-bottom: 1px solid var(--border-color); /* COHÉRENCE: Gris foncé */
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .guide-block .section-title{
+            margin-top:24px;
+            color:var(--highlight); /* COHÉRENCE: Vert au lieu de bleu */
+            font-size:1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .guide-block code {
+            font-family: 'Consolas', monospace;
+            background-color: rgba(0, 255, 0, 0.1);
+            color: var(--highlight);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.85rem;
+        }
+        
+        .guide-block pre{
+            background-color: var(--code-bg);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius:6px;
+            overflow:auto;
+            position:relative;
+            margin:15px 0;
+            border: 1px solid #005000;
+        }
+        
+        .btn-copy{
+            /* Réutilise le style du copy-btn existant pour la cohérence */
+            background-color: var(--highlight);
+            color: var(--bg-dark);
+            padding: 4px 8px; 
+            border-radius: 4px;
+            cursor:pointer;
+            font-size: 0.75rem;
+            font-weight: 700;
+            position:absolute;
+            top:8px;
+            right:8px;
+            transition: background-color 0.2s;
+        }
+        .btn-copy:hover {
+            background-color: #33ff33;
+        }
+        
+        @media (max-width:700px){
+            .guide-block table, .guide-block th, .guide-block td{font-size:12px}
+            .guide-block h2 { font-size: 1.5rem; }
+            .navbar-inner-content { justify-content: start; overflow-x: auto; flex-wrap: nowrap; }
+            .navbar a { flex-shrink: 0; padding: 0.5rem 0.5rem; }
+        }
     </style>
 </head>
 <body class="p-8">
 
-    <!-- BARRE DE NAVIGATION (MENU) - Rôle Sémantique: Navigation -->
+    <!-- BARRE DE NAVIGATION (MENU) - Mise à jour avec les nouvelles sections -->
     <nav class="navbar shadow-xl" >
         <div class="container mx-auto px-4">
-            <div class="navbar-inner-content flex flex-wrap justify-center text-xs md:text-sm lg:text-base items-center">
-                <a href="#article-1">1. Introduction</a>
-                <a href="#article-2">2. Variables & Args</a>
-                <a href="#article-3">3. Conditions (IF)</a>
-                <a href="#article-4">4. Itérations</a>
+            <div class="navbar-inner-content flex flex-wrap md:flex-nowrap justify-center text-xs md:text-sm lg:text-base items-center">
+                <a href="#article-1">1. Bases</a>
+                <a href="#article-2">2. Variables</a>
+                <a href="#article-3">3. Conditions</a>
+                <a href="#article-4">4. Boucles</a>
                 <a href="#article-5">5. Fonctions</a>
-                <a href="#article-6">6. Choix (CASE)</a>
-                <a href="#article-7">7. Gestion I/O</a>
+                <a href="#article-6">6. Choix</a>
+                <a href="#article-7">7. I/O</a>
+                <a href="#guide-sysadmin">SysAdmin</a>
+                <a href="#guide-devops">DevOps</a>
+                <a href="#guide-process">Processus</a>
             </div>
         </div>
     </nav>
@@ -258,6 +376,8 @@
 
         <main class="space-y-12">
 
+            <!-- ARTICLES BASH SCRIPTING EXISTANTS -->
+            
             <!-- ARTICLE 1: Les bases du Shell et des Scripts -->
             <article id="article-1" class="card">
                 <h2 class="article-title">1. Principes Fondamentaux et Structure</h2>
@@ -769,11 +889,106 @@ Nombre d'erreurs 'Permission denied': 2
                     </div>
                 </div>
             </article>
+            
+            <!-- NOUVELLE SECTION DE RÉFÉRENCE SYSMADMIN/DEVOPS (MISE À JOUR EN VERT) -->
+            <div class="guide-block">
+                <!-- SysAdmin -->
+                <section id="guide-sysadmin" aria-labelledby="sysadmin-title">
+                    <h2 id="sysadmin-title">🔧 Commandes essentielles (SysAdmin)</h2>
+
+                    <div class="section-title">Gestion du système & utilisateurs</div>
+                    <table>
+                        <thead><tr><th>Commande</th><th>Description</th><th>Exemple</th></tr></thead>
+                        <tbody>
+                            <tr><td>hostnamectl</td><td>Voir / modifier le nom de la machine</td><td><code>sudo hostnamectl set-hostname serveur-prod</code></td></tr>
+                            <tr><td>useradd / usermod / userdel</td><td>Créer / modifier / supprimer un utilisateur</td><td><code>sudo useradd -m alice</code></td></tr>
+                            <tr><td>passwd</td><td>Changer le mot de passe</td><td><code>sudo passwd alice</code></td></tr>
+                            <tr><td>chown / chmod</td><td>Modifier droits et propriétaires</td><td><code>sudo chown root:devops fichier.log</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">Stockage & partitions</div>
+                    <table>
+                        <thead><tr><th>Commande</th><th>Rôle</th><th>Exemple</th></tr></thead>
+                        <tbody>
+                            <tr><td>df -h</td><td>Espace disque libre</td><td><code>df -h</code></td></tr>
+                            <tr><td>du -sh *</td><td>Taille des dossiers</td><td><code>du -sh /var/log/*</code></td></tr>
+                            <tr><td>lsblk</td><td>Afficher les partitions logiques</td><td><code>lsblk</code></td></tr>
+                            <tr><td>fdisk -l</td><td>Détails bas niveau des disques</td><td><code>sudo fdisk -l</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">Fichiers & logs</div>
+                    <table>
+                        <thead><tr><th>Commande</th><th>Description</th><th>Exemple</th></tr></thead>
+                        <tbody>
+                            <tr><td>find</td><td>Rechercher un fichier</td><td><code>find /var/log -name "*.log"</code></td></tr>
+                            <tr><td>grep</td><td>Filtrer du texte</td><td><code>grep "error" /var/log/syslog</code></td></tr>
+                            <tr><td>tar</td><td>Archiver / compresser</td><td><code>tar -czf backup.tar.gz /etc</code></td></tr>
+                            <tr><td>tail -f</td><td>Suivre un log en temps réel</td><td><code>tail -f /var/log/syslog</code></td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- DevOps -->
+                <section id="guide-devops" aria-labelledby="devops-title" class="mt-8">
+                    <h2 id="devops-title">🚀 Commandes essentielles (DevOps)</h2>
+
+                    <div class="section-title">Docker & Conteneurs</div>
+                    <table>
+                        <thead><tr><th>Commande</th><th>Utilité</th><th>Exemple</th></tr></thead>
+                        <tbody>
+                            <tr><td>docker ps</td><td>Liste des conteneurs</td><td><code>docker ps -a</code></td></tr>
+                            <tr><td>docker logs</td><td>Voir les logs d’un conteneur</td><td><code>docker logs nginx</code></td></tr>
+                            <tr><td>docker exec -it</td><td>Entrer dans un conteneur</td><td><code>docker exec -it nginx bash</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">Kubernetes & CI/CD</div>
+                    <table>
+                        <thead><tr><th>Commande</th><th>Rôle</th><th>Exemple</th></tr></thead>
+                        <tbody>
+                            <tr><td>kubectl get pods</td><td>Liste des pods</td><td><code>kubectl get pods -n dev</code></td></tr>
+                            <tr><td>helm list</td><td>Liste des releases Helm</td><td><code>helm list</code></td></tr>
+                            <tr><td>ansible all -m ping</td><td>Tester les connexions SSH</td><td><code>ansible all -m ping</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">Réseau & supervision</div>
+                    <table>
+                        <thead><tr><th>Commande</th><th>Description</th><th>Exemple</th></tr></thead>
+                        <tbody>
+                            <tr><td>curl</td><td>Tester une requête HTTP</td><td><code>curl -I https://example.com</code></td></tr>
+                            <tr><td>ss -tuln</td><td>Voir les ports ouverts</td><td><code>sudo ss -tuln</code></td></tr>
+                            <tr><td>dig</td><td>Résolution DNS</td><td><code>dig google.com</code></td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Processus & Réseau courts -->
+                <section id="guide-process" class="mt-8">
+                    <h2>🧠 Processus & Services (rappel)</h2>
+                    <table>
+                        <thead><tr><th>Commande</th><th>Utilité</th><th>Exemple</th></tr></thead>
+                        <tbody>
+                            <tr><td>ps aux</td><td>Afficher processus</td><td><code>ps aux | grep nginx</code></td></tr>
+                            <tr><td>pidof / pgrep</td><td>Trouver PID(s)</td><td><code>pidof sshd</code></td></tr>
+                            <tr><td>kill / pkill</td><td>Terminer processus</td><td><code>sudo kill -9 2345</code></td></tr>
+                            <tr><td>systemctl</td><td>Gérer services (systemd)</td><td><code>sudo systemctl restart nginx</code></td></tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+            <!-- FIN NOUVELLE SECTION -->
         </main>
 
         <footer class="text-center mt-16 pt-8 border-t border-gray-700">
             <p class="text-xs text-gray-500 tracking-wider">
                 DOCUMENTATION TECHNIQUE RÉFÉRENTIELLE — BASH SHELL SCRIPTING
+            </p>
+            <!-- Ligne de copyright ajoutée -->
+            <p class="text-xs text-gray-500 tracking-wider mt-2">
+                &copy; <span id="current-year"></span> MBAYE | Contact: mmbaye1@hotmail.fr
             </p>
         </footer>
     </div>
@@ -881,6 +1096,83 @@ Nombre d'erreurs 'Permission denied': 2
                 }, 300);
             }, 2500);
         }
+    </script>
+    
+    <!-- Script pour l'année dynamique -->
+    <script>
+        // Met à jour l'année actuelle dans le pied de page
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+    
+    <!-- Script minimal pour boutons "Copier" et navigation interne légère (non intrusif) (ajusté pour éviter conflit avec copyCode principal) -->
+    <script>
+    /* Script pour les boutons "Copier" des nouveaux blocs de commande SysAdmin/DevOps/Processus */
+    (function(){
+        // trouve tous les <pre> à l'intérieur de .guide-block
+        var guide = document.querySelector('.guide-block');
+        if(!guide) return;
+        guide.querySelectorAll('code').forEach(function(codeElement){
+            // Les commandes dans les tableaux sont sous <code>
+            if(codeElement.closest('td')) return; // Ignore les <code> dans les tableaux
+
+            var pre = codeElement.closest('pre');
+            if(!pre) return;
+
+            // éviter duplication si bouton déjà présent
+            if(pre.querySelector('.btn-copy')) return;
+            var btn = document.createElement('button');
+            btn.className = 'btn-copy';
+            btn.type = 'button';
+            btn.textContent = 'Copier';
+            pre.style.position = 'relative'; // Assure que le bouton est positionné correctement
+
+            // Ajoute le bouton à la div ou au conteneur de pré (ici on le met sur pre)
+            pre.appendChild(btn); 
+            
+            btn.addEventListener('click', function(){
+                // Le texte à copier est celui à l'intérieur du <pre> (qui contient le <code>)
+                var text = pre.textContent.trim(); 
+                
+                // Si le texte est très court (comme un exemple de commande dans une seule ligne), 
+                // on ne garde que la commande elle-même.
+                // Pour ce bloc, on va copier le contenu du <code> pour être sûr.
+                text = codeElement.textContent.trim();
+
+                // Utilisation de l'API moderne navigator.clipboard pour copier
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function(){
+                        btn.textContent = 'Copié ✓';
+                        showNotification('Code Copié !');
+                        setTimeout(function(){ btn.textContent = 'Copier'; }, 1400);
+                    }).catch(function(err){
+                        btn.textContent = 'Erreur';
+                        showNotification('Erreur de copie.', true);
+                        setTimeout(function(){ btn.textContent = 'Copier'; }, 1400);
+                        // Fallback pour les environnements plus restrictifs (comme l'iframe)
+                        fallbackCopyTextToClipboard(text);
+                    });
+                } else {
+                    // Fallback
+                    fallbackCopyTextToClipboard(text);
+                    btn.textContent = 'Copié ✓';
+                    setTimeout(function(){ btn.textContent = 'Copier'; }, 1400);
+                }
+            });
+        });
+
+        // Les commandes dans les tableaux ne nécessitent pas de bouton de copie car elles sont courtes et isolées.
+    })();
+
+    /* 2) Petite fonction d'exposition: montrer / cacher sections par id (si tu veux) */
+    function showGuideSection(id){
+        var block = document.querySelector('.guide-block');
+        if(!block) return;
+        // cacher toutes les sections à l'intérieur du bloc
+        block.querySelectorAll('section').forEach(function(s){ s.style.display = 'none'; });
+        var s = block.querySelector('#' + id);
+        if(s) s.style.display = 'block';
+    }
+    // Par défaut, toutes les sections sont affichées (style CSS par défaut)
     </script>
 </body>
 </html>
